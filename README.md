@@ -1,12 +1,10 @@
 # user-mangement-api
-# to run the application 
+# To run the application 
 npm start (make sure nodemon should install in project)
-# to run as dev
-npm run dev
 
-##migartion will done once app start on the server using script in package.json*
+#migartion will done once app start on the server using script in package.json*
 
-## test.env is uploaded in server so to test the code 
+# test.env is uploaded in server so to test the code 
 
 Database :MonogoDb
 
