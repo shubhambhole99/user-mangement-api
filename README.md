@@ -1,7 +1,8 @@
 # user-mangement-api
 
-##migartion will done once app start on the server*
+##migartion will done once app start on the server using script in package.json*
 
+## test.env is uploaded in server so to test the code 
 
 Database :MonogoDb
 
