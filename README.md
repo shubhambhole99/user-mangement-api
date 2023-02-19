@@ -1,4 +1,8 @@
 # user-mangement-api
+# to run the application 
+npm start (make sure nodemon should install in project)
+# to run as dev
+npm run dev
 
 ##migartion will done once app start on the server using script in package.json*
 
