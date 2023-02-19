@@ -1,4 +1,8 @@
-const mongoose = require('mongoose-migrate')
+const mongoose = require('mongoose')
+const config = require('../config/config')
+const crypto = require('crypto')
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
 
 const userSchema = new mongoose.Schema({
     firstName: {
@@ -19,6 +23,10 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
+    password: {
+        type: String,
+        required: true
+    },
     isDisabled: {
         type: Boolean,
         default: false
@@ -26,5 +34,13 @@ const userSchema = new mongoose.Schema({
 },
     { timestamps: true }
 )
+
+// code to generated jwt token 
+
+userSchema.methods.getJwtToken = function () {
+    return jwt.sign({ id: this._id }, config.JWT, {
+        expiresIn: '7d'
+    })
+}
 
 module.exports = mongoose.model('User', userSchema)
