@@ -4,6 +4,20 @@ const catchAsyncErrors = require('../middleware/catchAsyncErrors');
 const bcrypt = require('bcrypt')
 const logger = require("../utlis/logger")
 
+
+
+exports.hello = async (req, res) => {
+    console.log("hi")
+    return res.status(200).json({
+        success: true,
+        message: "user registered succesfully",
+        data: "Hit Success"
+
+    })
+}
+
+
+
 //registring the user 
 exports.registeruser = catchAsyncErrors(async (req, res) => {
     try {
@@ -263,13 +277,13 @@ exports.disableUser = catchAsyncErrors(async (req, res) => {
 
         }
         user.isDisabled = !user.isDisabled;
-        
+
         const disableUserData = await user.findByIdAndUpdate(req.user._id, {
             isDisabled: req.body.isDisabled
         }, {
             new: true
         })
-        console.log(disableUserData,'236')
+        console.log(disableUserData, '236')
         if (!disableUserData) {
             return res.status(400).json({
                 success: "false",
