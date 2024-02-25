@@ -1,56 +1,69 @@
-// intialzing the dependinces
-const express = require('express');
+const express = require('express')
+const sls = require('serverless-http')
+const app = express()
 const cors = require('cors');
-const config = require('./config/config')
-const helmet = require('helmet');
-// importing logger.js in app.js
-const logger = require('./utlis/logger')
+const userRoutes = require('./routes/userRoutes')
+// check
+// const config = require('./config/config')
+// const bcrypt = require('bcrypt')
+const user = require('./models/userSchema')
 
-// database connection
 require('./database/db')
 
-// requiring routes dependencies
-const userRoutes = require('./routes/userRoutes')
-
-// defining the port on which application should run
-port = config.port || 5000
-
-//usng dependencies
-const app = express()
-// parses incoming requests with JSON payloads
 app.use(express.json())
+app.use('/hi', userRoutes)
 
-// using cors to solve cross-origin error
-app.use(cors())
-// defing logs // Middleware to log requests
+port = 3000
 
-app.use((err,req, res, next) => {
+app.get('/hi', async (req, res, next) => {
+    res.status(200).send('Hello World!')
+})
 
-    logger.error(`${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
-    next();
-});
+app.get('/users', async (req, res) => {
+    try {
+        const filters = {};
+        // if (req.query.firstName) {
+        //     filters.firstName = new RegExp(req.query.firstName, 'i');
+        // }
+        // if (req.query.lastName) {
+        //     filters.lastName = new RegExp(req.query.lastName, 'i');
+        // }
+        // if (req.query.email) {
+        //     filters.email = new RegExp(req.query.email, 'i');
+        // }
+        // if (req.query.phone) {
+        //     filters.phone = new RegExp(req.query.phone, 'i');
+        // }
+        // if (req.query.isDisabled) {
+        //     filters.isDisabled = req.query.isDisabled === 'true';
+        // }
+        try {
+            const users = await user.find();
+            if (!users) {
+                res.status(400).json({
+                    success: false,
+                    messagae: "unable to find user"
+                })
+                return
+            }
+            if (users) {
 
-//using helmet to secure the routes and applications 
-//  Open the Network tab by clicking on Inspect Element.
-//  Click on localhost and you will notice an additional set of headers in response
-app.use(helmet());
-//  parses incoming requests with urlencoded payloads and is based on body-parser
-app.use(express.urlencoded({ extended: true }))
-
-// defining routes
-app.use('/api/v1', userRoutes)
-
-// Error handling
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({ message: err.message });
-});
-
-// getting intilaze response from server
-app.get('/', (req, res) => {
-    return res.status(200).json({
-        message: "server responding "
-    })
+                return res.status(200).json({
+                    success: true,
+                    messagae: "user data found",
+                    count: users.length,
+                    data: users,
+                })
+            }
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            messagae: "something went wrong"
+        })
+    }
 })
 
 app.listen(port, () => {
@@ -60,3 +73,8 @@ app.listen(port, () => {
         }
     ])
 })
+
+
+
+
+module.exports.server = sls(app)
